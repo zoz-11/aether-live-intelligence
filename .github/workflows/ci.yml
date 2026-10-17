@@ -5,17 +5,111 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
-  typecheck:
+  docs:
+    name: Docs & inventory
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Required handoff files exist
+        run: |
+          set -euo pipefail
+          required=(
+            README.md
+            STATUS.md
+            AGENTS.md
+            SECURITY.md
+            LICENSE
+            docs/HANDOFF.md
+            docs/BLUEPRINT_AND_CHECKLIST.md
+            docs/SOURCE_INVENTORY.md
+          )
+          missing=0
+          for f in "${required[@]}"; do
+            if [[ ! -f "$f" ]]; then
+              echo "::error file=$f::Missing required file: $f"
+              missing=1
+            else
+              echo "ok $f"
+            fi
+          done
+          exit "$missing"
+
+      - name: Source inventory note
+        run: |
+          echo "### Partial tree reminder" >> "$GITHUB_STEP_SUMMARY"
+          echo "Core runtime modules (store, session, execute, live) may still be missing." >> "$GITHUB_STEP_SUMMARY"
+          echo "See docs/SOURCE_INVENTORY.md." >> "$GITHUB_STEP_SUMMARY"
+
+  install:
+    name: Install dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: npm
-      - run: npm ci || npm install
-      - run: npm run typecheck
-        continue-on-error: true
-      # Full typecheck may require generated route tree; do not block handoff.
+
+      - name: Install
+        run: |
+          if [[ -f package-lock.json ]]; then
+            npm ci
+          else
+            npm install
+          fi
+
+  typecheck:
+    name: Typecheck (soft)
+    needs: install
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install
+        run: |
+          if [[ -f package-lock.json ]]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Typecheck
+        id: tsc
+        run: |
+          if npm run typecheck; then
+            echo "result=pass" >> "$GITHUB_OUTPUT"
+          else
+            echo "result=fail" >> "$GITHUB_OUTPUT"
+            echo "::warning::typecheck failed (expected until full source tree is restored)"
+            exit 1
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Typecheck" >> "$GITHUB_STEP_SUMMARY"
+          echo "Result: **${{ steps.tsc.outputs.result || 'fail' }}**" >> "$GITHUB_STEP_SUMMARY"
+          echo "Soft gate while the export is partial." >> "$GITHUB_STEP_SUMMARY"
