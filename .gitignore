@@ -1,0 +1,33 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# build
+dist/
+.output/
+.vinxi/
+.tanstack/
+routeTree.gen.ts
+
+# env & secrets
+.env
+.env.*
+!.env.example
+.grok/
+*.pem
+
+# logs / OS
+npm-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# test / coverage
+coverage/
+.turbo/
