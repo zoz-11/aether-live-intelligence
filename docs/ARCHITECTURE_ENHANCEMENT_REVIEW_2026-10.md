@@ -240,3 +240,8 @@ For the current user workflow, the immediate value is to use a desktop-control M
 - Desktop Commander MCP: https://github.com/wonderwhy-er/DesktopCommanderMCP
 
 No application runtime code was changed for this addendum. The change remains documentation-only on the docs/aether-architecture-review-2026-10 branch and in draft PR #1.
+
+
+### Clarification: similarly named projects are distinct
+
+**Correction to the initial naming note:** CopilotKit's [OpenMuse](https://github.com/CopilotKit/OpenMuse) is a verified open-source repository and is not Meta's commercial Muse product. The independent [johnmatveyev-lab/grok-bot](https://github.com/johnmatveyev-lab/grok-bot) repository is also open source and explicitly not the commercial xAI/SpaceXAI Grok Bot product. [OnlyTerp/opengrok](https://github.com/OnlyTerp/opengrok) is yet another distinct project: a model-binding/configuration sidecar for an existing Grok Bot install, not a computer-use system. Meta Muse and commercial Grok Bot are separate product references, documented at [Meta](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent) and [xAI](https://x.ai/news/introducing-grok-bot). This distinction supersedes any ambiguity in the earlier reference section.
