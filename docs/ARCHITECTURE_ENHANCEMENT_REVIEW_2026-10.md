@@ -180,3 +180,63 @@ The next useful milestone should prove one complete, truthful loop rather than s
 - Apple XCUIAutomation: https://developer.apple.com/documentation/XCUIAutomation
 - Apple ScreenCaptureKit: https://developer.apple.com/documentation/ScreenCaptureKit
 - Apple iOS screen-capture sample: https://developer.apple.com/documentation/screencapturekit/capturing-screen-content-on-ios
+
+
+## Addendum — OpenMuse, OpenGrok, independent Grok Bot, and computer-use MCPs
+
+**Research update:** 23 October 2026. This addendum supplements the initial comparison with additional upstream README and verification-document inspection.
+
+### OpenMuse: the closest additional product-pattern reference
+
+[CopilotKit/OpenMuse](https://github.com/CopilotKit/OpenMuse) describes an MIT-licensed alpha template for a personal agent built with CopilotKit React Native for iOS, Android, and web. Its documented product primitives include a persistent Chromium browser profile, optional isolated Linux workspace, a separate server/task worker/browser worker, visible activity, pause/resume/cancel/retry, approvals, saved receipts and artifacts, and user takeover of the same browser session.
+
+OpenMuse's own verification page records test suites and local component checks and also explicitly names boundaries: it is alpha; open-ended reasoning, live Google accounts, and CopilotKit Rich Threads need their own configuration; successful local checks do not establish that every planned capability is complete; live model/provider acceptance remains separate. This is a useful exemplar of honest verification discipline.
+
+**Aether decision:** preserve the current Voice-Lock and UI, but adapt OpenMuse’s run lifecycle and activity model: run ID, visible plan/steps, pending input/approval state, cancel/resume/retry, receipts, artifact index, and last safe checkpoint. Do not copy its whole stack before Aether's own baseline builds and real model adapter work. It also introduces operational dependencies (separate browser service, persistent storage, model and/or CopilotKit service configuration), so its feature list should not be interpreted as free/unconfigured out-of-the-box production behavior.
+
+### OpenGrok is not an iOS device-control engine
+
+[OnlyTerp/opengrok](https://github.com/OnlyTerp/opengrok) describes itself as a configuration sidecar for an existing Grok Bot installation. It maps model IDs and provider-specific request parameters, probes live providers/wires, and can show per-agent model telemetry. Its README explicitly says it does not host or emulate Grok Bot and does not control the user's machine; the “computer” is supplied by the existing Grok Bot product.
+
+**Aether decision:** borrow the principle “provider configuration is not proof the provider honored a feature.” Add a model/provider contract probe: send a tiny real request, record the provider/model actually used, inspect usage, and verify response schema/tool-call semantics. Add a provider compatibility matrix for tool calling, streaming, structured output, vision and reasoning parameters. Do not use OpenGrok as Aether's computer-use layer.
+
+### Independent Grok Bot repository: useful but security-sensitive
+
+[johnmatveyev-lab/grok-bot](https://github.com/johnmatveyev-lab/grok-bot) is a separate MIT-licensed single-owner workspace project and explicitly says it is not the commercial Grok Bot product and is not affiliated with xAI. It supports named agents, streaming across different model providers, a shared computer/files/browser/terminal, tools, plugins and approval scaffolding. Its README also warns that the project is not a hardened sandbox; commands run in a real shell under its workspace boundary, and keys can be stored through browser/local configuration.
+
+**Aether decision:** borrow the visible model selector/test, streamed status/tool events, action receipts, and the user-visible pattern of drafting before approving an external action. Do not transplant browser-local credential storage or accept a workspace path as a security boundary. Aether should keep secrets server-side, isolate agent workspaces, require explicit grants, and gate shell/network access.
+
+### Desktop Computer Use MCP: valuable for desktop/Codex workflows, not equivalent to iOS automation
+
+| Reference | Best use | Important boundary |
+|---|---|---|
+| [Zavora Computer Use MCP](https://github.com/zavora-ai/computer-use-mcp) | Cross-platform desktop GUI use on macOS/Windows/Linux; accessibility/app scripting first, screenshots/mouse/keyboard where needed; a run console can show plan/activity/live frames. | Its documented loopback endpoint is unauthenticated. Do not expose the service on a shared or public host; a reachable endpoint grants real desktop control. Paid API demos also have usage costs. |
+| [OpenComputerUse](https://github.com/TopherMayor/open-computer-use) | Self-hosted MCP with accessibility-first UI state, mouse/keyboard, screenshots, budgets, rate limits, audit logs and emergency stop for macOS/Linux. | Needs OS permissions and is desktop-only. The fake backend is useful for repeatable tests; actual device permissions and UI need separate verification. |
+| [Nicolai van der Smagt computer-use-mcp](https://github.com/NicolaivdSmagt/computer-use-mcp) | macOS screenshots, mouse/keyboard, app permissions and tiered allowlists for desktop UI test/workflows. | Requires native binaries bundled inside Claude.app and macOS Accessibility + Screen Recording permission. Not a portable mobile/iOS solution. |
+| [Desktop Commander MCP](https://github.com/wonderwhy-er/DesktopCommanderMCP) | Repo/file editing, terminal processes, data/file operations and local audit history. | This is primarily a workspace/terminal MCP, not a general screenshot/mouse-based iOS controller. Its own docs warn it is not a sandbox unless deployed with stronger isolation. |
+
+**Aether decision:** distinguish three different products in the roadmap: (1) desktop computer-use bridge for macOS/Windows/Linux; (2) isolated browser/workspace used by durable Aether tasks; (3) on-device iOS/iPadOS capabilities. They need different adapters, permissions, trust boundaries, and acceptance tests. Do not label a desktop MCP as “iPad control.”
+
+For the current user workflow, the immediate value is to use a desktop-control MCP from a trusted local host (e.g. a Codex/Work workstation) to inspect browsers and test web UI, while keeping production computer sessions isolated from that host. That does not eliminate the need for a native iOS companion if the intended product must act inside other iPad apps.
+
+### Strengthened product principles distilled from the added sources
+
+1. **Evidence before claims:** provider/model selection is not enough. Record the actual model route and run a contract probe; never infer that a 200 or a visible button means an operation succeeded.
+2. **Activity is a first-class product surface:** persist progress events, current step, approval/input wait, pause cause, last successful step, artifact links, cost and final receipt.
+3. **Approval is a server decision:** keep exact arguments server-side, bind the approval to the request, expire it, enforce one-time execution, check permission at execution time, and deduplicate retries.
+4. **Persistent computer state is scoped:** give each autonomous worker its own browser profile and workspace; no host-shell/filesystem fallback when its isolation layer is unavailable.
+5. **Unconfigured is not operational:** missing model keys, computer runtime, database, OAuth, or screen permission must be shown as a clear dependency/health state, not quietly simulated as success.
+6. **Separate platform surfaces:** web UI, remote browser, host desktop and iOS device use have different abilities. Capability discovery must report the real platform and enabled scope.
+
+### Update to source register
+
+- OpenMuse README: https://github.com/CopilotKit/OpenMuse
+- OpenMuse release verification: https://github.com/CopilotKit/OpenMuse/blob/main/docs/VERIFICATION.md
+- OpenGrok (model-binding sidecar): https://github.com/OnlyTerp/opengrok
+- Independent Grok Bot workspace: https://github.com/johnmatveyev-lab/grok-bot
+- Zavora Computer Use MCP: https://github.com/zavora-ai/computer-use-mcp
+- OpenComputerUse: https://github.com/TopherMayor/open-computer-use
+- macOS computer-use-mcp: https://github.com/NicolaivdSmagt/computer-use-mcp
+- Desktop Commander MCP: https://github.com/wonderwhy-er/DesktopCommanderMCP
+
+No application runtime code was changed for this addendum. The change remains documentation-only on the docs/aether-architecture-review-2026-10 branch and in draft PR #1.
