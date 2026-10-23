@@ -1,29 +1,18 @@
 {
-  "name": "aether-live-intelligence",
+  "name": "aether",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.3.0",
+  "description": "Aether — voice-first personal agent with its own computer, email and phone. iPhone/iPad first.",
+  "license": "MIT",
   "type": "module",
+  "workspaces": ["apps/core", "apps/web"],
+  "engines": { "node": ">=20.19" },
   "scripts": {
-    "dev": "vite --host 0.0.0.0 --port 5173",
-    "build": "tsc --noEmit && vite build",
-    "preview": "vite preview --host 0.0.0.0 --port 5173",
-    "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "clsx": "^2.1.1",
-    "lucide-react": "^0.510.0",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "tailwind-merge": "^3.5.0",
-    "zustand": "^5.0.0"
-  },
-  "devDependencies": {
-    "@tailwindcss/vite": "^4.3.0",
-    "@types/react": "^19.2.0",
-    "@types/react-dom": "^19.2.0",
-    "@vitejs/plugin-react": "^5.2.0",
-    "tailwindcss": "^4.3.0",
-    "typescript": "^5.7.0",
-    "vite": "^6.2.0"
+    "dev": "npm run dev --workspace apps/core & npm run dev --workspace apps/web",
+    "build": "npm run build --workspace apps/web && npm run build --workspace apps/core",
+    "start": "npm run start --workspace apps/core",
+    "test": "npm run test --workspace apps/core && npm run test --workspace apps/web",
+    "typecheck": "npm run typecheck --workspace apps/core && npm run typecheck --workspace apps/web",
+    "desktop": "npm run desktopd --workspace apps/core"
   }
 }

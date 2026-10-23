@@ -1,0 +1,48 @@
+{
+  "name": "@aether/core",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "aether-core": "dist/index.js",
+    "aether-desktopd": "dist/desktop/daemon.js"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "desktopd": "tsx src/desktop/daemon.ts",
+    "build": "tsc -p tsconfig.build.json && node scripts/copy-assets.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.5.11",
+    "@hono/node-server": "^2.1.5",
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "croner": "^10.0.1",
+    "hono": "^4.13.13",
+    "imapflow": "^2.9.1",
+    "mailparser": "^3.12.4",
+    "nodemailer": "^10.2.1",
+    "pg": "^8.23.1",
+    "playwright-core": "^1.64.1",
+    "smtp-server": "^3.21.1",
+    "web-push": "^3.6.7",
+    "ws": "^8.22.0",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "tsx": "^4.20.6",
+    "vitest": "^3.2.4",
+    "@types/node": "^20.19.0",
+    "@types/ws": "^8.18.1",
+    "@types/pg": "^8.15.5",
+    "@types/nodemailer": "^7.0.2",
+    "@types/smtp-server": "^3.5.12",
+    "@types/mailparser": "^3.4.6",
+    "@types/web-push": "^3.6.4"
+  }
+}

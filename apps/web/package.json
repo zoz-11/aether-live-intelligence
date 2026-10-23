@@ -1,0 +1,33 @@
+{
+  "name": "@aether/web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@novnc/novnc": "^1.7.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.61.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "recharts": "^3.10.1",
+    "tailwind-merge": "^3.7.0",
+    "zustand": "^5.0.16"
+  },
+  "devDependencies": {
+    "vite": "^7.1.9",
+    "@vitejs/plugin-react": "^5.0.4",
+    "tailwindcss": "^4.1.14",
+    "@tailwindcss/vite": "^4.1.14",
+    "typescript": "^5.9.3",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.1",
+    "vitest": "^3.2.4"
+  }
+}
